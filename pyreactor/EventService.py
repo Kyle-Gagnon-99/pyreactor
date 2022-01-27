@@ -1,5 +1,9 @@
 import logging
 import threading
 
-def __init__(self):
-    logging.debug("This is a constructor for EventService")
+class EventService:
+
+    # Constructor
+    def __init__(self):
+        #logging.debug("This is a constructor for EventService")
+        print("Hello from Event Service!")
