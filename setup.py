@@ -1,4 +1,13 @@
+from gettext import install
+import os
 from setuptools import setup
+
+packageFolder = os.path.dirname(os.path.realpath(__file__))
+requirementPath = packageFolder + '/requirements.txt'
+install_requires = []
+if os.path.isfile(requirementPath):
+    with open(requirementPath) as f:
+        install_requires = f.read().splitlines()
 
 setup(
     name = 'pyreactor',
@@ -6,7 +15,7 @@ setup(
     author = 'Kyle Gagnon',
     author_email = 'kmgagnon99@gmail.com',
     packages = ['pyreactor'],
-    requires = ['pyzmq', 'google.protobuf'],
+    requires = install_requires,
     version = 'v1.0-SNAPSHOT',
     license = 'MIT',
     description = 'A python reactor library utilizing ZMQ',
