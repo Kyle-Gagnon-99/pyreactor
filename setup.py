@@ -1,4 +1,3 @@
-from gettext import install
 from setuptools import setup
 
 setup(
@@ -7,10 +6,7 @@ setup(
     author = 'Kyle Gagnon',
     author_email = 'kmgagnon99@gmail.com',
     packages = ['pyreactor'],
-    requires = [
-        'pyzmq',
-        'protobuf'
-        ],
+    install_requires = ['pyzmq', 'protobuf'],
     version = 'v1.0.0',
     license = 'MIT',
     description = 'A python reactor library utilizing ZMQ',
