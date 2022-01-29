@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0fReactorId.prot
 _REACTORID = DESCRIPTOR.message_types_by_name['ReactorId']
 ReactorId = _reflection.GeneratedProtocolMessageType('ReactorId', (_message.Message,), {
   'DESCRIPTOR' : _REACTORID,
-  '__module__' : 'ReactorId_pb2'
+  '__module__' : 'ReactorId'
   # @@protoc_insertion_point(class_scope:reactor.ReactorId)
   })
 _sym_db.RegisterMessage(ReactorId)
