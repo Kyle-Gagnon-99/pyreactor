@@ -11,7 +11,7 @@ setup(
         'pyzmq',
         'protobuf'
         ],
-    version = 'v1.0-SNAPSHOT',
+    version = 'v1.0.0',
     license = 'MIT',
     description = 'A python reactor library utilizing ZMQ',
     long_description = open('README.md').read()
