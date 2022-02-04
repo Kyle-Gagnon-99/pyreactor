@@ -22,7 +22,7 @@ logging.basicConfig(format=format, level=logging.DEBUG, datefmt='%m/%d/%Y %I:%M:
 evService = EventService.EventService()
 evService.start()
 
-fullReactor = FullReactor(5)
+fullReactor = FullReactor(10)
 fullReactor.start()
 
-fullReactor.sendMessage(5, "Hello Reactor 5!")
+fullReactor.sendMessage(5, "Hello Reactor 10!")

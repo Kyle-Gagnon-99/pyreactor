@@ -9,5 +9,7 @@ class FullReactor(Reactor.Reactor):
     def consumeMessage(self, message):
         logging.debug("Message Received: %s", message)
         
-    def processFailMsg(self, failMsgStr, destRid):
-        logging.debug("Failed to deliver")
+    def processFailMsg(self, failMsgStr, destRid, numOfAttempts, message):
+        logging.debug("Failed to deliver with a num of attempts %s", numOfAttempts)
+        if(numOfAttempts <= 3):
+            self.resendMessage(destRid, numOfAttempts, message)

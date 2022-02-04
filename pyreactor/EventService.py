@@ -3,6 +3,8 @@ import logging
 import threading
 import zmq
 
+from pyreactor import MsgAttempts
+
 class EventService:
     """
     The Event Service class is used as a way to pass messages (events) from
@@ -43,6 +45,7 @@ class EventService:
             
             sourceMsg = zmq.Frame()
             destMsg = zmq.Frame()
+            numOfAttemptsMsg = zmq.Frame()
             message = zmq.Frame()
             
             try:
@@ -54,13 +57,14 @@ class EventService:
                     logging.error("ZMQ Error: %s", error.strerror)                    
             
             destMsg = self.__routerSocket.recv()
+            numOfAttemptsMsg = self.__routerSocket.recv()
             message = self.__routerSocket.recv()
             
             try:
                 self.__passMessage(destMsg, message)
             except zmq.ZMQError as error:
                 logging.error("ZMQ Error %s", error.strerror)
-                self.__failMessage(sourceMsg, destMsg)
+                self.__failMessage(sourceMsg, destMsg, numOfAttemptsMsg, message)
               
     def start(self):
         """ 
@@ -80,19 +84,31 @@ class EventService:
         self.__routerSocket.send(destMsg, zmq.SNDMORE)
         self.__routerSocket.send(message)
         
-    def __failMessage(self, sourceMsg, destMsg):
+    def __failMessage(self, sourceMsg, destMsg, numOfAttemptsMsg, originalMessage):
         """
-        Sends a FAIL_TO_DELIVER message when the router could not find the client
+        Sends a FAIL_TO_DELIVER message when the router could not find the client. Gets
+        back the amount of times this message has attempted to send and what the message
+        was.
 
         Args:
             sourceMsg (Frame): Where the message came from
             destMsg (Frame): Where the message was supposed to go
+            numOfAttemptsMsg (Frame): The number of attempts for sending the message
+            originalMessage (Frame): The original message that was sent
         """
+        
+        numOfAttemptsObj = MsgAttempts.MsgAttempts()
+        numOfAttemptsObj.ParseFromString(numOfAttemptsMsg)
+        numOfAttemptsObj.numOfAttempts = numOfAttemptsObj.numOfAttempts + 1
+        numOfAttemptsStr = numOfAttemptsObj.SerializeToString()
+        
         failToDeliver = "FAIL_TO_DELIVER"
         
-        self.__routerSocket.send(sourceMsg, zmq.SNDMORE)
-        self.__routerSocket.send_string(failToDeliver, flags=zmq.SNDMORE)
-        self.__routerSocket.send(destMsg)
+        self.__routerSocket.send(sourceMsg, flags = zmq.SNDMORE)
+        self.__routerSocket.send_string(failToDeliver, flags = zmq.SNDMORE)
+        self.__routerSocket.send(destMsg, flags = zmq.SNDMORE)
+        self.__routerSocket.send(numOfAttemptsStr, flags = zmq.SNDMORE)
+        self.__routerSocket.send(originalMessage)
         
     def shutdown(self):
         """
